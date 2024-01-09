@@ -17,7 +17,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
     cors({
-        origin: "http://localhost:3001",
+        origin: "https://mern-frontend-beige-psi.vercel.app/",
         credentials: true,
     })
 );
