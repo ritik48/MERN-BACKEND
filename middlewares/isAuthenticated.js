@@ -32,6 +32,9 @@ async function isAuthenticated(req, res, next) {
         );
 
         const user = await User.findById(token);
+        if (!user) {
+            throw new ExpressError(401, "You are not authenticated");
+        }
         req.user = user;
 
         next();

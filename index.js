@@ -11,12 +11,16 @@ const userRoute = require("./routes/user");
 const adminRoute = require("./routes/admin");
 
 const app = express();
+
+app.use(express.static("public"));
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({
-    origin: "http://localhost:3001",
-    credentials: true
-}));
+app.use(
+    cors({
+        origin: "http://localhost:3001",
+        credentials: true,
+    })
+);
 
 // app.use((req, res, next) => {
 //     res.header("Access-Control-Allow-Origin", "http://127.0.0.1:3001/");

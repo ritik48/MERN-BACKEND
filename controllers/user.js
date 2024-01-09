@@ -54,6 +54,7 @@ module.exports.loginUser = async (req, res, next) => {
 module.exports.createUser = async (req, res, next) => {
     try {
         const { email, phone, password, name } = req.body;
+        // console.log("create user img = ", req.file);
         if (!phone && !email) {
             throw new ExpressError(400, "Provide either email or phone");
         }
@@ -68,7 +69,12 @@ module.exports.createUser = async (req, res, next) => {
                 throw new ExpressError(400, "Email already exists");
             }
             console.log("in email");
-            user = new User({ email, password, name });
+            user = new User({
+                email,
+                password,
+                name,
+                image: req.file.filename,
+            });
         }
         if (phone) {
             console.log("in phone");
@@ -76,9 +82,14 @@ module.exports.createUser = async (req, res, next) => {
             if (existPhone) {
                 throw new ExpressError(400, "Phone no. already exists");
             }
-            user = new User({ phone, password, name });
+            user = new User({
+                phone,
+                password,
+                name,
+                image: req.file.filename,
+            });
         }
-        
+
         const savedUser = await user.saveUser();
 
         //generate access token
@@ -102,6 +113,7 @@ module.exports.createUser = async (req, res, next) => {
                 msg: "user created successfully",
                 user: savedUser,
             });
+        // res.status(200).json({ msg: req.body, file: req.file });
     } catch (err) {
         next(err);
     }
@@ -141,12 +153,27 @@ module.exports.aboutUser = async (req, res, next) => {
     }
 };
 
+module.exports.updateImage = async (req, res, next) => {
+    try {
+        await User.findByIdAndUpdate(req.user._id, {
+            image: req.file.filename,
+        });
+        res.status(200).json({ message: "image updated successfully." });
+    } catch (err) {
+        next(err);
+    }
+};
+
 module.exports.deleteUser = async (req, res, next) => {
     try {
         await User.deleteOne({ _id: req.user._id });
 
         res.status(200)
-            .clearCookie("accessToken")
+            .clearCookie("accessToken", {
+                httpsOnly: true,
+                secure: true,
+                sameSite: "None",
+            })
             .json({ msg: "user deleted successfully" });
     } catch (err) {
         next(err);
@@ -155,7 +182,6 @@ module.exports.deleteUser = async (req, res, next) => {
 
 module.exports.logoutUser = async (req, res, next) => {
     try {
-        console.log("logout");
         res.status(200)
             .clearCookie("accessToken", {
                 httpsOnly: true,

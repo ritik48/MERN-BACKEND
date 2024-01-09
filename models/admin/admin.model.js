@@ -23,6 +23,10 @@ const adminSchema = Schema({
         enum: ["User", "Admin"],
         default: "Admin",
     },
+    image: {
+        type: String,
+        // required: true
+    }
 });
 
 adminSchema.methods.saveAdmin = async function () {

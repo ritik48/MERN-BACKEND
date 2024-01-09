@@ -62,6 +62,17 @@ module.exports.createAdmin = async (req, res, next) => {
             throw new ExpressError(400, "Password cannot be empty");
         }
 
+        let adminExists;
+        if (email) {
+            adminExists = await Admin.findOne({ email });
+        } else {
+            adminExists = await Admin.findOne({ phone });
+        }
+
+        if (adminExists) {
+            throw new ExpressError(400, "Cannot use this email/phone");
+        }
+
         const admin = new Admin({ email, phone, password, name });
         const savedAdmin = await admin.saveAdmin();
 
@@ -134,8 +145,23 @@ module.exports.deleteAdmin = async (req, res, next) => {
         await Admin.deleteOne({ _id: req.admin._id });
 
         res.status(200)
-            .clearCookie("accessToken")
+            .clearCookie("accessToken", {
+                httpsOnly: true,
+                secure: true,
+                sameSite: "None",
+            })
             .json({ msg: "admin deleted successfully" });
+    } catch (err) {
+        next(err);
+    }
+};
+
+module.exports.updateImage = async (req, res, next) => {
+    try {
+        await Admin.findByIdAndUpdate(req.admin._id, {
+            image: req.file.filename,
+        });
+        res.status(200).json({ message: "image updated successfully." });
     } catch (err) {
         next(err);
     }
@@ -170,6 +196,17 @@ module.exports.editUser = async (req, res, next) => {
         res.status(200).json({
             msg: "User details successfully updated",
         });
+    } catch (err) {
+        next(err);
+    }
+};
+
+module.exports.updateUserImage = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+
+        await User.findByIdAndUpdate(id, { image: req.file.filename });
+        res.status(200).json({ message: "image updated successfully" });
     } catch (err) {
         next(err);
     }

@@ -23,6 +23,10 @@ const userSchema = Schema({
         enum: ["User", "Admin"],
         default: "User",
     },
+    image: {
+        type: String,
+        required: true
+    }
 });
 
 userSchema.methods.saveUser = async function () {
