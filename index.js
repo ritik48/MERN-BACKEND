@@ -40,6 +40,9 @@ async function connectDb() {
 
 app.use("/user", userRoute);
 app.use("/admin", adminRoute);
+app.get("/", (req, res) => {
+    res.json({ msg: "test" });
+});
 
 // app.get("/logout", (req, res) => {
 //     res.status(200).clearCookie("accessToken").json({ msg: "user logged out" });
