@@ -28,8 +28,13 @@ app.use(
 //     next();
 // });
 
+const MONGO_URL =
+    process.env.MONGO_URI || "mongodb://127.0.0.1:27017/assignment";
+
+const PORT = process.env.PORT || 3000;
+
 async function connectDb() {
-    await mongoose.connect("mongodb://127.0.0.1:27017/assignment");
+    await mongoose.connect(MONGO_URL);
     console.log("Database connected.");
 }
 
@@ -54,6 +59,6 @@ app.use((err, req, res, next) => {
 // app.listen(3000, () => console.log("SERVER STARTED ON PORT 3000..."));
 connectDb()
     .then(() => {
-        app.listen(3000, () => console.log("Listening on port 3000...."));
+        app.listen(PORT, () => console.log(`Listening on port ${PORT}....`));
     })
     .catch((err) => console.log("Cannot connect to Database."));
