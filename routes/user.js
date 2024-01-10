@@ -1,5 +1,7 @@
 const express = require("express");
 
+const { validateUser } = require("../middlewares/validateUser");
+
 const {
     loginUser,
     createUser,
@@ -18,7 +20,7 @@ const router = express.Router();
 
 router.get("/", isAuthenticated, aboutUser);
 router.post("/login", loginUser);
-router.post("/signup", upload.single("profile"), createUser);
+router.post("/signup", upload.single("profile"), validateUser, createUser);
 router.get("/logout", logoutUser);
 router.delete("/delete", isAuthenticated, deleteUser);
 router.post("/edit", isAuthenticated, editUser);

@@ -54,7 +54,7 @@ module.exports.loginUser = async (req, res, next) => {
 module.exports.createUser = async (req, res, next) => {
     try {
         const { email, phone, password, name } = req.body;
-        // console.log("create user img = ", req.file);
+
         if (!phone && !email) {
             throw new ExpressError(400, "Provide either email or phone");
         }
@@ -89,7 +89,15 @@ module.exports.createUser = async (req, res, next) => {
                 image: req.file.filename,
             });
         }
-
+        if (email && phone) {
+            user = new User({
+                phone,
+                password,
+                name,
+                email,
+                image: req.file.filename,
+            });
+        }
         const savedUser = await user.saveUser();
 
         //generate access token

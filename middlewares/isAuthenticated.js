@@ -5,7 +5,6 @@ const ExpressError = require("../utils/ExpressError");
 function verifyToken(encryptedToken, secret) {
     try {
         const token = jwt.verify(encryptedToken, secret);
-        console.log("token = ", token);
         return token;
     } catch (err) {
         if (err.name == "JsonWebTokenError") {
@@ -35,6 +34,7 @@ async function isAuthenticated(req, res, next) {
         if (!user) {
             throw new ExpressError(401, "You are not authenticated");
         }
+        console.log("jwt user = ", user);
         req.user = user;
 
         next();
